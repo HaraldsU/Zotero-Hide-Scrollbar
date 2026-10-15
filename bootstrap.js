@@ -1,6 +1,5 @@
-var sss, uriX, uriY;
+var sss, uriX;
 const PREF_X = "extensions.hide-pdf-scroll.hideHorizontal";
-const PREF_Y = "extensions.hide-pdf-scroll.hideVertical";
 
 function makeURI(css) {
   return Services.io.newURI("data:text/css," + encodeURIComponent(css));
@@ -14,7 +13,6 @@ function setSheet(uri, on) {
 
 function apply() {
   setSheet(uriX, Services.prefs.getBoolPref(PREF_X, true));
-  setSheet(uriY, Services.prefs.getBoolPref(PREF_Y, true));
 }
 
 function addMenu(win) {
@@ -22,8 +20,7 @@ function addMenu(win) {
   let popup = doc.getElementById("menu_ToolsPopup");
   if (!popup || doc.getElementById("hide-pdf-scroll-x")) return;
   for (let [id, label, pref] of [
-    ["hide-pdf-scroll-x", "Hide PDF Horizontal Scrollbar", PREF_X],
-    ["hide-pdf-scroll-y", "Hide PDF Vertical Scrollbar", PREF_Y],
+    ["hide-pdf-scroll-x", "Hide PDF Scrollbars", PREF_X],
   ]) {
     let item = doc.createXULElement("menuitem");
     item.id = id;
@@ -39,15 +36,14 @@ function addMenu(win) {
 }
 
 function removeMenu(win) {
-  for (let id of ["hide-pdf-scroll-x", "hide-pdf-scroll-y"]) {
+  for (let id of ["hide-pdf-scroll-x"]) {
     win.document.getElementById(id)?.remove();
   }
 }
 
 function startup() {
   sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
-  uriX = makeURI("#viewerContainer { overflow-x: hidden !important; }");
-  uriY = makeURI("#viewerContainer { overflow-y: hidden !important; }");
+  uriX = makeURI("#viewerContainer { scrollbar-width: none !important; }");
   apply();
   for (let win of Zotero.getMainWindows()) addMenu(win);
 }
@@ -58,7 +54,6 @@ function onMainWindowUnload({ window }) { removeMenu(window); }
 function shutdown() {
   if (sss) {
     setSheet(uriX, false);
-    setSheet(uriY, false);
   }
   for (let win of Zotero.getMainWindows()) removeMenu(win);
 }
@@ -69,3 +64,4 @@ function uninstall(data, reason) {
     Services.prefs.clearUserPref(PREF_X);
   }
 }
+
