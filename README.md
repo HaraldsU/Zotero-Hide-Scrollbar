@@ -1,5 +1,5 @@
 # Zotero-Hide-Scrollbar
-A Zotero plugin for hiding the pdf viewer scrollbars.
+A Zotero plugin for hiding the pdf viewer scrollbars
 ## Features
 - Disables the scollbars from the PDF viewer
 
